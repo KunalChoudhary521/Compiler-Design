@@ -1,5 +1,6 @@
 /***********************************************************************
  * **YOUR GROUP INFO SHOULD GO HERE**
+ *   KUNAL CHOUDHARY - 999981863 
  *
  * globalvars.c
  *
@@ -26,7 +27,7 @@ FILE * runInputFile;
 
 /***********************************************************************
  * Control flags, set by main.c, used to cause various optional compiler
- * actions to take place. 
+ * actions to take place.
  **********************************************************************/
 int errorOccurred;
 int suppressExecution;
@@ -46,8 +47,3 @@ int dumpInstructions;
  * **NOTE** If you need to add global variables for phases 1 to 4, add
  * them below this comment.
  **********************************************************************/
-
-
-
-
-

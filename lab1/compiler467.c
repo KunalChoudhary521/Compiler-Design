@@ -1,6 +1,7 @@
 /***********************************************************************
  * **YOUR GROUP INFO SHOULD GO HERE**
- *
+ *   KUNAL CHOUDHARY - 999981863
+ * 
  * compiler467.c
  *
  * This is the main driver program for the CSC467F course project
@@ -92,7 +93,7 @@ int main (int argc, char *argv[]) {
 /* TODO: call your code generation routine here */
 //  if (errorOccurred)
 //    fprintf(outputFile,"Failed to compile\n");
-//  else 
+//  else
 //    genCode(ast);
 
 /***********************************************************************
@@ -231,7 +232,7 @@ void getOpts (int numargs, char **argstr) {
 }
 
 /***********************************************************************
- * Utility for opening files 
+ * Utility for opening files
  **********************************************************************/
 FILE *fileOpen (char *fileName, char *fileMode, FILE *defaultFile) {
   FILE * fTemp;
@@ -257,4 +258,3 @@ void sourceDump (void) {
   }
   rewind(inputFile);
 }
-

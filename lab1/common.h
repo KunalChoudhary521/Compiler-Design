@@ -1,32 +1,34 @@
 /***********************************************************************
  * **YOUR GROUP INFO SHOULD GO HERE**
  *
+ *   KUNAL CHOUDHARY - 999981863
+ *
  * common.h
  *
  * common definitions that are used throughout the compiler.
  **********************************************************************/
 
-#ifndef _COMMON_H_ 
-#define _COMMON_H_ 
+#ifndef _COMMON_H_
+#define _COMMON_H_
 
 #include <stdio.h> /* for FILE */
 
- 
+
 /**********************************************************************
  * Some useful definitions. These may be modified or removed as needed.
- *********************************************************************/ 
+ *********************************************************************/
 #ifndef TRUE
 # define TRUE  1
 #endif
 #ifndef FALSE
 # define FALSE 0
 #endif
- 
+
 #define MAX_IDENTIFIER 32
 #define MAX_TEXT       256
 #define MAX_INTEGER    32767
 
-/********************************************************************** 
+/**********************************************************************
  * External declarations for variables declared in globalvars.c.
  **********************************************************************/
 extern FILE * inputFile;
@@ -52,4 +54,3 @@ extern int dumpInstructions;
 
 
 #endif
-
