@@ -2,6 +2,7 @@
 /**********************************************************************
  *
  * **YOUR GROUP INFO SHOULD GO HERE**
+ *   KUNAL CHOUDHARY - 999981863 
  *
  *  Interface to the scanner module for CSC467 course project
  **********************************************************************/
@@ -23,9 +24,20 @@ int yyline = 1;
 %}
 %option noyywrap
 
-WS          [ \t]
+WS          [ \t\n]
 
 %%
+
+if {yTRACE(KEY_IF); return KEY_IF;}
+const {yTRACE(KEY_CONST); return KEY_CONST;}
+
+/*
+Questions for TA:
+1.  what is parse.output for?
+2.  explain tip#3 in lab handout.
+3.  is student name and student_number enough for info.?
+*/
+
 "/*"        {
               int c1      = 0;
               int c2      = yyinput();
