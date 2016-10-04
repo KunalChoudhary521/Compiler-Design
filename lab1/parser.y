@@ -60,27 +60,27 @@ extern int yyline;        /* variable holding current line number   */
   float fval;
 }
 // TODO:Replace myToken with your tokens, you can use these tokens in flex
-%token        KEY_IF KEY_CONST
 
-/*--------------------------------------------------------
 //data types
 %token        BOOL BVEC2 BVEC3 BVEC4
 %token        INT IVEC2 IVEC3 IVEC4
 %token        FLOAT VEC2 VEC3 VEC4
 //operator types
 %token        ASSIGN ADD SUB MULT DIV EXP
-//bracket types
-%token         LEFT_BR RIGHT_BR RIGHT_SQ_BR LEFT_CURLY_BR RIGHT_CURLY_BR
-//miscellaneous tokens
-%token        NEWLINE SEMI_COLON COMMA IDENTIFIER
-//comparison types
-%token        EQ_TO NOT_EQ GT_T GT_T_EQ LS_T LS_T_EQ NOT AND OR
 //keywords
 %token        KEY_CONST KEY_IF KEY_ELSE KEY_WHILE KEY_VOID KEY_TRUE KEY_FALSE
+//bracket types
+%token         LEFT_BR RIGHT_BR LEFT_SQ_BR RIGHT_SQ_BR LEFT_CURLY_BR RIGHT_CURLY_BR
+//miscellaneous tokens
+%token        NEWLINE SEMI_COLON COMMA WS
+//comparison types
+%token        EQ_TO NOT_EQ GT_T GT_T_EQ LS_T LS_T_EQ NOT AND OR
 //pre-defined functions
 %token        F_LIT F_DP3 F_RSQ
+//complex types
+%token        ID DIGIT LETTER
 
------------------------------------------------------------*/
+
 
 
 %start    program
@@ -105,8 +105,16 @@ tokens
   ;
 // TODO: replace myToken with the token the you defined.
 token
-  :     KEY_IF
-  |     KEY_CONST
+  :     BOOL | BVEC2 | BVEC3 | BVEC4
+  |     INT  | IVEC2 |  IVEC3 | IVEC4
+  |     FLOAT | VEC2 | VEC3 | VEC4
+  |     ASSIGN | ADD | SUB | MULT | DIV | EXP
+  |     KEY_CONST | KEY_IF | KEY_ELSE | KEY_WHILE | KEY_VOID | KEY_TRUE | KEY_FALSE
+  |     LEFT_BR | RIGHT_BR | LEFT_SQ_BR | RIGHT_SQ_BR | LEFT_CURLY_BR | RIGHT_CURLY_BR
+  |     NEWLINE | SEMI_COLON | COMMA | WS
+  |     EQ_TO | NOT_EQ | GT_T | GT_T_EQ | LS_T | LS_T_EQ | NOT | AND | OR
+  |     F_LIT | F_DP3 | F_RSQ
+  |     ID | DIGIT | LETTER
   ;
 
 
