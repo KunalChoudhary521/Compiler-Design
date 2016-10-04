@@ -3,6 +3,7 @@
  *
  * **YOUR GROUP INFO SHOULD GO HERE**
  *   KUNAL CHOUDHARY - 999981863 - kunal.choudhary@mail.utoronto.ca
+ *   BOYOWA DAVID OGBEIDE - 999644693 - boyowa.ogbeide@mail.utoronto.ca
  *
  *  Interface to the scanner module for CSC467 course project
  **********************************************************************/
