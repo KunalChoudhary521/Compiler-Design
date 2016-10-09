@@ -56,8 +56,9 @@ extern int yyline;        /* variable holding current line number   */
 
 %union {
   int ival;
-  bool bval;
   float fval;
+  bool bval;  
+  char* cval;
 }
 // TODO:Replace myToken with your tokens, you can use these tokens in flex
 
@@ -68,7 +69,7 @@ extern int yyline;        /* variable holding current line number   */
 //operator types
 %token        ASSIGN ADD SUB MULT DIV EXP
 //keywords
-%token        KEY_CONST KEY_IF KEY_ELSE KEY_WHILE KEY_VOID KEY_TRUE KEY_FALSE
+%token        KEY_CONST KEY_IF KEY_ELSE KEY_WHILE KEY_VOID KEY_TRUE KEY_FALSE KEY_NULL
 //bracket types
 %token         LEFT_BR RIGHT_BR LEFT_SQ_BR RIGHT_SQ_BR LEFT_CURLY_BR RIGHT_CURLY_BR
 //miscellaneous tokens
@@ -77,8 +78,12 @@ extern int yyline;        /* variable holding current line number   */
 %token        EQ_TO NOT_EQ GT_T GT_T_EQ LS_T LS_T_EQ NOT AND OR
 //pre-defined functions
 %token        F_LIT F_DP3 F_RSQ
+//pre-defined variables (V4 means vec4 type and BL for Bool type)
+%token        V4_GL_FRAGCOLOR BL_GL_FRAGDEPTH V4_GL_FRAGCOORD V4_GL_TEXCOORD V4_GL_COLOR
+%token        V4_GL_SECONDARY V4_GL_FOGFRAGCOLOR V4_GL_LIGHT_HALF V4_GL_LIGHT_AMBIENT 
+%token        V4_GL_MATERIAL_SHININESS V4_ENV1 V4_ENV2 V4_ENV3
 //complex types
-%token        ID DIGIT LETTER
+%token        ID
 
 
 
@@ -109,12 +114,15 @@ token
   |     INT  | IVEC2 |  IVEC3 | IVEC4
   |     FLOAT | VEC2 | VEC3 | VEC4
   |     ASSIGN | ADD | SUB | MULT | DIV | EXP
-  |     KEY_CONST | KEY_IF | KEY_ELSE | KEY_WHILE | KEY_VOID | KEY_TRUE | KEY_FALSE
+  |     KEY_CONST | KEY_IF | KEY_ELSE | KEY_WHILE | KEY_VOID | KEY_TRUE | KEY_FALSE | KEY_NULL
   |     LEFT_BR | RIGHT_BR | LEFT_SQ_BR | RIGHT_SQ_BR | LEFT_CURLY_BR | RIGHT_CURLY_BR
   |     NEWLINE | SEMI_COLON | COMMA | WS
   |     EQ_TO | NOT_EQ | GT_T | GT_T_EQ | LS_T | LS_T_EQ | NOT | AND | OR
   |     F_LIT | F_DP3 | F_RSQ
-  |     ID | DIGIT | LETTER
+  |     ID 
+  |     V4_GL_FRAGCOLOR | BL_GL_FRAGDEPTH | V4_GL_FRAGCOORD | V4_GL_TEXCOORD | V4_GL_COLOR
+  |     V4_GL_SECONDARY | V4_GL_FOGFRAGCOLOR | V4_GL_LIGHT_HALF | V4_GL_LIGHT_AMBIENT 
+  |     V4_GL_MATERIAL_SHININESS | V4_ENV1 | V4_ENV2 | V4_ENV3
   ;
 
 
