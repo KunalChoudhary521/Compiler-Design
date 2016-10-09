@@ -8,13 +8,6 @@
  *  Interface to the scanner module for CSC467 course project
  **********************************************************************/
 
-/*
-Questions for TA:
-1.  what is parse.output for?
-2.  explain tip#3 in lab handout.
-3.  is student name and student_number enough for info.?
-*/
-
 #include "common.h"
 #include "parser.tab.h"
 #include "string.h"
@@ -34,7 +27,7 @@ int yyline = 1;
 WS            [ \t\b\v]
 
 
-ID                 [A-Za-z_][A-Za-z0-9_]*
+ID                 [A-Za-z][A-Za-z0-9_]*
 INTEGER            (([1-9][0-9]*)|0)
 FLT                (([0-9]*"."[0-9]+)|([0-9]+"."[0-9]*))
 %%
