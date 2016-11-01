@@ -2,7 +2,7 @@
 
 ### How to run manual page:
 ```shell
-1.  man ./compiler467.man 
+1.  make man 
 2.  make compiler467
 ```
 
