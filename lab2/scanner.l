@@ -1,7 +1,9 @@
 %{
 /**********************************************************************
- *
  * **YOUR GROUP INFO SHOULD GO HERE**
+ *
+ *  KUNAL CHOUDHARY - kunal.choudhary@mail.utoronto.ca - 0999981863
+ * 
  *
  *  Interface to the scanner module for CSC467 course project
  **********************************************************************/
