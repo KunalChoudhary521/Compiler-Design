@@ -1,0 +1,33 @@
+lab 2 - Documentation:
+
+Member#1: Kunal Choudhary - kunal.choudhary@mail.utoronto.ca - 0999981863
+Member#2:
+
+Work Breakdown:
+1	Kunal: 
+	-	wrote ambiguous CFG in parser.y
+	-	wrote test cases for parser in parser_tester.txt
+
+2	David:
+	-	
+
+Challenges faced:
+1	Converting the ambiguous CFG to unambiguous CFG (How? <explain process here>)
+2	Differentiating between binary_op '-' from unary_op '-'
+	-	We used %prec when defining the grammar of unary_op '-' to distinguish
+		between binary_op '-' from unary_op '-'
+
+
+Overall Approach taken:
+1	Create test cases for the parser in parser_tester.txt
+2	Copy the ambiguous CFG in parser.y
+3	Check which tests fail
+4	Convert ambiguous CFG to unambiguous
+
+How your group verified the parser?:
+1	We created test cases for the parser in parser_tester.txt
+2	If a test passes or fails unintentionally, then modify the parser
+3	Test parser again, repeat step#2
+
+Anything interesting:
+1	Bison does not automatically differentiate between binary_op '-' from unary_op '-'
