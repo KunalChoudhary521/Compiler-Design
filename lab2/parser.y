@@ -154,6 +154,8 @@ type
   | BOOL_T {yTRACE("type -> BOOL_T");}
   | FLOAT_T {yTRACE("type -> FLOAT_T");}
   | VEC_T {yTRACE("type -> VEC_T");}
+  | IVEC_T {yTRACE("type -> IVEC_T");}
+  | BVEC_T {yTRACE("type -> BVEC_T");}
   ;
 
 /*is the grammar given already in order of precedence? check binary_op -> ...*/
