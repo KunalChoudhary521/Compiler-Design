@@ -1,10 +1,12 @@
 /*add test for parser within {}*/
 
-{
-	/*Tests that pass
+{	
+	/****************Tests that pass**************/
+	/*
 	bool a = false;
 	int b = 3;
 	float c = 3.4;
+	float nev_num = -5.4;
 
 	ivec2 aHc_;
 	ivec3 _d34;
@@ -32,27 +34,33 @@
 	
 	while(c != 0)
 	{c = c - 1;}
-
-
-	int a = dp3(3);
-	*/
-	
-
 	if(true != false)
 		{ c_45 = cp * ece4;}
 	else
 		{c_45 = kt * tp;}
 
+
+	int a = dp3(3);
+	float c = rsq(a);
+	*/
+	/****************End of Tests that pass**************/
+		
 	
-	/*Tests that should pass (currently fail)
+	/**********Tests that should pass (currently fail)***********/
+	/*
 	vec2 e = lit(9,3);
 	ivec2 d = vec2(3,4);
+	int mult_arg = dp3(a,v,b,f);
+	float mult_arg = lit(3.4,21.0,1.2);
 	*/
+	/****************End of Tests that should pass***********/
 
 
-	/*Tests that should fail
+	/******************Tests that should fail******************/
+	/*
 	int 64sd;
 	const int v;
 	*/
+	/*************End of Tests that should fail****************/
 
 }
