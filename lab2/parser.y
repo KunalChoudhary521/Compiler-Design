@@ -1,6 +1,8 @@
 %{
 /***********************************************************************
  * --YOUR GROUP INFO SHOULD GO HERE--
+ *
+ *  KUNAL CHOUDHARY - kunal.choudhary@mail.utoronto.ca - 0999981863
  * 
  *   Interface to the parser module for CSC467 course project.
  * 
@@ -24,7 +26,7 @@
 #define YYERROR_VERBOSE
 #define yTRACE(x)    { if (traceParser) fprintf(traceFile, "%s\n", x); }
 
-void yyerror(char* s);    /* what to do in case of error            */
+void yyerror(const char* s);    /* what to do in case of error            */
 int yylex();              /* procedure for calling lexical analyzer */
 extern int yyline;        /* variable holding current line number   */
 
@@ -70,7 +72,7 @@ enum {
 %token          BOOL_T
 %token          CONST
 %token          FALSE_C TRUE_C
-%token          FUNC
+//%token          FUNC
 %token          IF WHILE ELSE
 %token          AND OR NEQ EQ LEQ GEQ
 
@@ -81,14 +83,19 @@ enum {
 %token <as_float> FLOAT_C
 %token <as_int>   INT_C
 %token <as_str>   ID
+%token <as_func>  FUNC
+//Are these tokens from union{}? If yes, shouldn't there be %token <as_func> FUNC here?
 
-%left     '|'
-%left     '&'
-%nonassoc '=' NEQ '<' LEQ '>' GEQ
-%left     '+' '-'
-%left     '*' '/'
-%right    '^'
-%nonassoc '!' UMINUS
+%left OR
+%left AND
+%left EQ NEQ '<' LEQ '>' GEQ
+%left '+' '-'
+%left '*' '/'
+%right  '^'
+%left UMINUS '!'
+%left '[' ']' '(' ')'
+//in lab2.pdf, '!' is left-to-right assoc., then shouldn't the line below change to %left?
+//%nonassoc '!' UMINUS
 
 %start    program
 
@@ -100,57 +107,127 @@ enum {
  *    1. Replace grammar found here with something reflecting the source
  *       language grammar
  *    2. Implement the trace parser option of the compiler
+ 
+ priority is from bottom-to-top (top has the least priority)
  ***********************************************************************/
 program
-  :   tokens       
-  ;
-tokens
-  :  tokens token  
-  |
-  ;
-token
-  : ID 
-  | AND
-  | OR
-  | NEQ
-  | LEQ
-  | GEQ
-  | EQ
-  | TRUE_C
-  | FALSE_C
-  | INT_C
-  | FLOAT_C
-  | CONST
-  | ELSE
-  | IF
-  | WHILE
-  | FLOAT_T
-  | INT_T
-  | BOOL_T
-  | VEC_T
-  | IVEC_T
-  | BVEC_T
-  | FUNC               
-  | '+'
-  | '-'
-  | '*'
-  | '/'
-  | '^'  
-  | '!'
-  | '='
-  | '<'
-  | '>'   
-  | ','
-  | ';'
-  | '('
-  | ')'
-  | '['
-  | ']'
-  | '{'
-  | '}'                                    
+  :   scope {yTRACE("program -> scope");}       
   ;
 
+scope
+  :  '{' declarations statements '}' {yTRACE("scope -> { declarations statements }");}
+  ;
 
+declarations
+  : declarations declaration {yTRACE("declaration -> declarations declaration");}
+  | /*epsilon*/ {yTRACE("declaration -> empty");}
+  ;
+  
+declaration
+  : type ID ';' {yTRACE("declaration -> type ID ;");}
+  | type ID '=' expression ';' {yTRACE("declaration -> type ID = expression ;");}
+  | CONST type ID '=' expression ';' {yTRACE("declaration -> const type ID = expression ;");}
+  //| /*epsilon*/ {yTRACE("declaration -> empty");}
+  ;
+  
+statements
+  : statements statement {yTRACE("statements -> statements statement");}
+  | /*epsilon*/ {yTRACE("statements -> empty");}
+  ;
+
+statement
+  : variable '=' expression ';' {yTRACE("statement -> variable = expression ;");}
+  | IF '(' expression ')' statement else_statement {yTRACE("statement -> IF ( expression ) statement else_statement");}
+  | WHILE '(' expression ')' statement {yTRACE("statement -> WHILE ( expression ) statement");}
+  | scope {yTRACE("statement -> scope");}
+  | ';' {yTRACE("statement -> ;");}
+  ;
+  
+else_statement
+  : ELSE statement {yTRACE("else_statement -> ELSE statement");}
+  | /*epsilon*/ {yTRACE("else_statement -> empty");}
+  ;
+
+/*how do I tell the difference b/w vec2 & vec3*/  
+type
+  : INT_T {yTRACE("type -> INT_T");} 
+  | BOOL_T {yTRACE("type -> BOOL_T");}
+  | FLOAT_T {yTRACE("type -> FLOAT_T");}
+  | VEC_T {yTRACE("type -> VEC_T");}
+  ;
+
+/*is the grammar given already in order of precedence? check binary_op -> ...*/
+expression
+  :  constructor {yTRACE("expression -> constructor");}
+  | function {yTRACE("expression -> function");}
+  | INT_C {yTRACE("expression -> INT_C");/*in scanner.l, INT_C is defined as int literal; C for constant/literal*/}
+  | FLOAT_C {yTRACE("expression -> FLOAT_C");/*in scanner.l, FLOAT_C is defined as float literal*/}
+  | variable {yTRACE("expression -> variable");}
+  | unary_op expression {yTRACE("expression -> unary_op expression");}
+  | expression binary_op expression {yTRACE("expression -> expression binary_op expression");}
+  | TRUE_C {yTRACE("expression -> TRUE_C");}
+  | FALSE_C {yTRACE("expression -> FALSE_C");}
+  | '(' expression ')' {yTRACE("expression -> ( expression )");}
+  ;
+  
+variable
+  : ID {yTRACE("variable -> ID");}
+  | ID '['INT_C']' {yTRACE("variable -> ID [ INT_C ]");}
+  ;
+  
+unary_op
+  : '!' {yTRACE("unary_op -> !");/*defined within [<>=!] in scanner.l*/}
+  | '-' %prec UMINUS {yTRACE("unary_op -> -");/*%prec is used to differentiate b/w unary '-' and binary '-'
+  source:https://www.gnu.org/software/bison/manual/html_node/Infix-Calc.html */}
+  ;
+  
+binary_op
+  : AND {yTRACE("binary_op -> AND");}
+  | OR {yTRACE("binary_op -> OR");}
+  | EQ {yTRACE("binary_op -> EQ");}
+  | NEQ {yTRACE("binary_op -> NEQ");}
+  | '<' {yTRACE("binary_op -> <");/*what do we do when '<' isn't given a name in scanner.l*/}
+  | LEQ {yTRACE("binary_op -> LEQ");}
+  | '>' {yTRACE("binary_op -> >");}
+  | GEQ {yTRACE("binary_op -> GEQ");}  
+  | '+' {yTRACE("binary_op -> +");}
+  | '-' {yTRACE("binary_op -> -");/*WARNING: THIS IS BINARY '-', RATHER THAN UNARY '-'*/}
+  | '*' {yTRACE("binary_op -> *");}
+  | '/' {yTRACE("binary_op -> /");}
+  | '^' {yTRACE("binary_op -> ^");}
+  ;
+  
+constructor
+  : type '(' arguments ')' {yTRACE("constructor -> ( arguments )");}
+  ;
+  
+function 
+  :   FUNC '(' arguments_opt ')'          
+				  {                    
+				    switch ($1)//$1 is the 1st term in the syntax rule (check bison tutorial csc467)
+				    {
+				      case 0:
+					yTRACE("function -> dp3 ( arguments_opt )");
+					break;
+				      case 1:
+					yTRACE("function -> lit ( arguments_opt )");
+					break;
+				      case 2:
+					yTRACE("function -> rsq ( arguments_opt )");
+					break;
+				    }
+				  }
+  ;
+
+arguments_opt
+  : arguments {yTRACE("arguments_opt -> arguments");} 
+  | /*epsilon*/ {yTRACE("arguments_opt -> empty");}
+  ;
+  
+arguments
+  : arguments ',' expression {yTRACE("arguments -> arguments , expression");}
+  | expression {yTRACE("arguments -> expression");}
+  ;
 %%
 
 /***********************************************************************ol
@@ -159,7 +236,7 @@ token
  * The given yyerror function should not be touched. You may add helper
  * functions as necessary in subsequent phases.
  ***********************************************************************/
-void yyerror(char* s) {
+void yyerror(const char* s) {
   if(errorOccurred) {
     return;    /* Error has already been reported by scanner */
   } else {
