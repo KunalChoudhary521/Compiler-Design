@@ -3,7 +3,7 @@
  * **YOUR GROUP INFO SHOULD GO HERE**
  *
  *  KUNAL CHOUDHARY - kunal.choudhary@mail.utoronto.ca - 0999981863
- * 
+ *  BOYOWA DAVID OGBEIDE - boyowa.ogbeide@mail.utoronto.ca - 999644693
  *
  *  Interface to the scanner module for CSC467 course project
  **********************************************************************/
@@ -71,7 +71,7 @@ lit                           { yylval.as_func = 1; yOUT(FUNC); }
 true                          { yOUT(TRUE_C); }
 false                         { yOUT(FALSE_C); }
 
-0                             { yylval.as_int = 0; yOUT(INT_C); }                  
+0                             { yylval.as_int = 0; yOUT(INT_C); }
 [1-9][0-9]*                   { if(ParseInt()) { yOUT(INT_C); } yyterminate(); }
 
 (0|([1-9][0-9]*))\.[0-9]*     { if(ParseFloat()) { yOUT(FLOAT_C); } yyterminate(); }
@@ -137,7 +137,7 @@ int ParseInt(void) {
 /* Convert a string to a float token. */
 int ParseFloat(void) {
   double num = strtod(yytext, NULL);
-  
+
   if(ERANGE == errno) {
     if(HUGE_VAL == num || -HUGE_VAL == num) {
       yERROR("Floating point literal is out of range (case 1).");
@@ -155,7 +155,7 @@ int ParseFloat(void) {
   if(FLT_MAX < num || -FLT_MAX > num) {
     yERROR("Floating point literal is out of range (case 2).");
     return 0;
-  }  
+  }
 
   yylval.as_float = (float) num;
   return 1;
@@ -172,6 +172,5 @@ int ParseIdent(void) {
   memcpy(ident, yytext, yyleng);
 
   yylval.as_str = ident;
-  return 1; 
+  return 1;
 }
-
