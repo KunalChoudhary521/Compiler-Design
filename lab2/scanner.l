@@ -3,7 +3,7 @@
  * **YOUR GROUP INFO SHOULD GO HERE**
  *
  *  KUNAL CHOUDHARY - kunal.choudhary@mail.utoronto.ca - 0999981863
- *  BOYOWA DAVID OGBEIDE - boyowa.ogbeide@mail.utoronto.ca - 999644693
+ *  BOYOWA DAVID OGBEIDE - boyowa.ogbeide@mail.utoronto.ca - 0999644693
  *
  *  Interface to the scanner module for CSC467 course project
  **********************************************************************/
@@ -41,6 +41,7 @@ int yyline = 1;
 \r?\n                         { yyline++; }
 <<EOF>>                       { yyterminate(); }
 
+[,]                           { yOUT(yytext[0]); }
 [+\-*/\^]                     { yOUT(yytext[0]); }
 [()[\]{}]                     { yOUT(yytext[0]); }
 [<>=!]                        { yOUT(yytext[0]); }
