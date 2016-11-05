@@ -3,7 +3,7 @@
  * --YOUR GROUP INFO SHOULD GO HERE--
  *
  *  KUNAL CHOUDHARY - kunal.choudhary@mail.utoronto.ca - 0999981863
- *  BOYOWA DAVID OGBEIDE - boyowa.ogbeide@mail.utoronto.ca - 999644693
+ *  BOYOWA DAVID OGBEIDE - boyowa.ogbeide@mail.utoronto.ca - 0999644693
  *   Interface to the parser module for CSC467 course project.
  *
  *   Phase 2: Implement context free grammar for source language, and
@@ -117,20 +117,19 @@ scope
 
 declarations
   : declarations declaration {yTRACE("declaration -> declarations declaration");}
-  | /*epsilon*/ {yTRACE("declaration -> empty");}
+  | /*epsilon*/ {yTRACE("declaration -> EPSILON");}
   ;
-
 
 statements
   : statements statement {yTRACE("statements -> statements statement");}
-  | /*epsilon*/ {yTRACE("statements -> empty");}
+  | /*epsilon*/ {yTRACE("statements -> EPSILON");}
   ;
 
 declaration
   : type ID ';' {yTRACE("declaration -> type ID ;");}
   | type ID '=' expression ';' {yTRACE("declaration -> type ID = expression ;");}
   | CONST type ID '=' expression ';' {yTRACE("declaration -> const type ID = expression ;");}
-  //| /*epsilon*/ {yTRACE("declaration -> empty");}
+  //| /*epsilon*/ {yTRACE("declaration -> EPSILON");}
   ;
 
 statement
@@ -143,10 +142,9 @@ statement
 
 else_statement
   : ELSE statement {yTRACE("else_statement -> ELSE statement");}
-  | /*epsilon*/ {yTRACE("else_statement -> empty");}
+  | /*epsilon*/ {yTRACE("else_statement -> EPSILON");}
   ;
 
-/*how do I tell the difference b/w vec2 & vec3*/
 type
   : INT_T {yTRACE("type -> INT_T");}
   | IVEC_T { char ivecX[16];
@@ -210,7 +208,7 @@ function
 
 arguments_opt
   : arguments {yTRACE("arguments_opt -> arguments");}
-  | /*epsilon*/ {yTRACE("arguments_opt -> empty");}
+  | /*epsilon*/ {yTRACE("arguments_opt -> EPSILON");}
   ;
 
 arguments
