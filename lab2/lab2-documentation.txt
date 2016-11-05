@@ -1,33 +1,62 @@
 lab 2 - Documentation:
 
 Member#1: Kunal Choudhary - kunal.choudhary@mail.utoronto.ca - 0999981863
-Member#2:
+Member#2: Boyowa David Ogbeide - boyowa.ogbeide@mail.utoronto.ca - 0999644693
 
-Work Breakdown:
-1	Kunal: 
-	-	wrote ambiguous CFG in parser.y
-	-	wrote test cases for parser in parser_tester.txt
+-----------------Work Breakdown------------------:
+1	Kunal:
+  - Wrote ambiguous CFG in parser.y
+	-	Converted ambiguous CFG to unambiguous CFG
 
 2	David:
-	-	
+	- Wrote test cases for parser in parser_tester.txt
 
-Challenges faced:
-1	Converting the ambiguous CFG to unambiguous CFG (How? <explain process here>)
-2	Differentiating between binary_op '-' from unary_op '-'
-	-	We used %prec when defining the grammar of unary_op '-' to distinguish
-		between binary_op '-' from unary_op '-'
+------------------Challenges faced------------------:
+1	Converting the ambiguous CFG to unambiguous CFG
+  - All the grammar under binar_op and unary_op should be placed
+    under expression grammar in order for Bison to determine the
+    precedence of each operator.
+    For example:
+    binary_op: AND {...}
+      is placed under expression like so
+    expression: expression AND expression {...}
 
+2 Differentiate between binary_op '-' from unary_op '-'
+  - We used <%prec UMINUS> when defining grammar for unary '-' in order
+    for Bison to give unary '-' higher precedence than binary '-'
 
-Overall Approach taken:
+3 Differentiate between {ivec2, ivec3, ivec4}; {bvec2, bvec3, bvec4};
+  - We used $1 argument to get the (2, 3 or 4) from scanner. Then we added
+    the specific type in a string (or char array) using sprintf(). Now, the
+    parser displays type -> IVEC3 instead of type -> IVEC.
+
+------------------Overall Approach taken------------------:
 1	Create test cases for the parser in parser_tester.txt
-2	Copy the ambiguous CFG in parser.y
+2	Add the ambiguous CFG in parser.y
 3	Check which tests fail
 4	Convert ambiguous CFG to unambiguous
+5 Repeat step#3
 
-How your group verified the parser?:
+------------------How your group verified the parser?------------------:
 1	We created test cases for the parser in parser_tester.txt
 2	If a test passes or fails unintentionally, then modify the parser
 3	Test parser again, repeat step#2
 
-Anything interesting:
-1	Bison does not automatically differentiate between binary_op '-' from unary_op '-'
+------------------Anything interesting------------------:
+1 Bison does not automatically differentiate between binary_op '-' from unary_op '-'
+
+2 There was no rule defined for ',' in scanner.l file. As a result, expression with
+  multiple arguments separated by ',' would fail. For example, the following would
+  not parse successfully even though they should pass based on the grammar defined:
+  ivec2 as = ivec2(3,1);
+  vec2 e = lit(9,3);
+  int mult_arg = dp3(a,v,b,f);
+
+  (The issue was resolved after adding a rule for [,])
+
+3 There seems to be one shift-reduce conflict. It is possible that it is because
+    Bison chooses to shift the "else" rather than reduce in situations such as:
+    "if (...)
+        if(...)
+     else
+        (...)
