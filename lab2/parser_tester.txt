@@ -1,8 +1,10 @@
-/*add test for parser within {}*/
+/*add test for parser within {}
+  To use this file: ./compiler467 -Tp < parser_tester.txt
+*/
 
-{	
+{
 	/****************Tests that pass**************/
-	/*
+  /*
 	bool a = false;
 	int b = 3;
 	float c = 3.4;
@@ -12,7 +14,7 @@
 	ivec3 _d34;
 	ivec4 b4_5;
 	vec2 o_;
-	vec3 aV453_; 
+	vec3 aV453_;
 	vec4 B_a5_6;
 	bvec2 _845_;
 	bvec3 aa;
@@ -22,7 +24,7 @@
 	int cplx = 6^7 * 5 / (4 + 5) - 6 * 154;
 	float ptr1 = 4.32 * 56;
 	float ptr2 = 4.32 - 9.32;
-	float v = 3 / 4; <-- not sure if this should pass because both are ints
+	float v = 3 / 4;
 	float ct = 6.5 * 97;
 	float mole = 6.021 * (10 ^ 24);
 	float c = (1+true);
@@ -31,35 +33,33 @@
 
 	const int v = 763;
 	const float ty = 2.34;
-	
-	while(c != 0)
-	{c = c - 1;}
-	if(true != false)
-		{ c_45 = cp * ece4;}
-	else
-		{c_45 = kt * tp;}
+
+  int a = dp3(3);
+	float c = rsq(az);
+  ivec2 o_ = ivec2(3,2);
+  vec2 e = lit(9,3);
+  int mult_arg = dp3(a,v,b,f);
+  vec2 e = lit(9,3);
+  ivec2 d = vec2(3,4);
+  bvec2 d = vec2(true, false);
+  float mult_arg = lit(3.4,21.0,1.2);
 
 
-	int a = dp3(3);
-	float c = rsq(a);
-	*/
+  while(c != 0)
+  c = c - 1;
+  if(true != false)
+  	c_45 = cp * ece4;
+  else
+  	{c_45 = kt * tp;}
+  */
 	/****************End of Tests that pass**************/
-		
-	
-	/**********Tests that should pass (currently fail)***********/
-	/*
-	vec2 e = lit(9,3);
-	ivec2 d = vec2(3,4);
-	int mult_arg = dp3(a,v,b,f);
-	float mult_arg = lit(3.4,21.0,1.2);
-	*/
-	/****************End of Tests that should pass***********/
 
 
 	/******************Tests that should fail******************/
 	/*
 	int 64sd;
 	const int v;
+  bvec2 d = vec2(true, false, );
 	*/
 	/*************End of Tests that should fail****************/
 
