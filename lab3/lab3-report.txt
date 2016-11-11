@@ -1,0 +1,19 @@
+lab 3 - Report:
+
+Member#1: Kunal Choudhary - kunal.choudhary@mail.utoronto.ca - 0999981863
+Member#2: Boyowa David Ogbeide - boyowa.ogbeide@mail.utoronto.ca - 0999644693
+
+Breakdown of work:
+
+
+Approach to type/semantic checking:
+
+
+Approach to AST structure:
+
+
+Challenges faced:
+
+
+Novelties/found anything interesting:
+
