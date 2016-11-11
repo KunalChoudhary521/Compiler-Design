@@ -1,4 +1,4 @@
-# Lab 2 - Parser (Compiler467)
+# Lab 3 - AST (Compiler467)
 
 ### How to run manual page:
 ```shell
