@@ -31,3 +31,11 @@
 # Debug files
 *.dSYM/
 *.su
+
+#ignore qt creator files
+*.creator
+*.creator.user
+*.files
+*.includes
+lab3/c467-ast.config
+
