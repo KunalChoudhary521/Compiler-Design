@@ -4,7 +4,10 @@ Member#1: Kunal Choudhary - kunal.choudhary@mail.utoronto.ca - 0999981863
 Member#2: Boyowa David Ogbeide - boyowa.ogbeide@mail.utoronto.ca - 0999644693
 
 Breakdown of work:
-
+1   Kunal - Implement AST (ast.c)
+2           Implement Semantic Analysis (semantic.c)
+3           Implement Symbol Table (symbol.c)
+4           Write test cases to test AST and semantic analyzer
 
 Approach to type/semantic checking:
 
@@ -13,7 +16,7 @@ Approach to AST structure:
 
 
 Challenges faced:
-
+-   Pre-order and post-order traversal in AST are distinctly different than in BSTs. In ASTs, each node can have a variable number of child-nodes. As a result, coding these traversals were more tedious to write.
 
 Novelties/found anything interesting:
 
