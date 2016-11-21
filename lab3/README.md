@@ -2,8 +2,7 @@
 
 ### How to run manual page:
 ```shell
-1.  make man 
-2.  make compiler467
+1.  make man
 ```
 
 ### How to compile:
@@ -14,5 +13,5 @@
 
 ### How to run:
 ```shell
-1.  (./compiler467 -Tp < <input_file>) > <output_file>
+1.  (./compiler467 -Da < <input_file>) > <output_file>
 ```
