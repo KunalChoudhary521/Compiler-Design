@@ -18,41 +18,87 @@ struct node_;
 typedef struct node_ node;
 extern node *ast;
 
+typedef enum{
+    INT, IVEC2, IVEC3, IVEC4,
+    BOOL, BVEC2, BVEC3, BVEC4,
+    FLOAT, VEC2, VEC3, VEC4,
+    FUNCT
+}types;
+
+typedef enum{
+    MINUS, NOT
+} unary_ops;
+
+typedef enum{
+    AND_OP, OR_OP,
+    EQ_OP, NEQ_OP, LT_OP, LEQ_OP, GT_OP, GEQ_OP,
+    ADD_OP, SUB_OP, MULT_OP, DIV_OP, POW_OP
+} binary_ops;
+
+
 typedef enum {
-  UNKNOWN               = 0,
+  UNKNOWN               ,
+  INSIDE_SCOPE          ,
+  SCOPE_NODE            ,
+  DECLARATIONS_NODE     ,
+  STATEMENTS_NODE       ,
 
-  SCOPE_NODE            = (1 << 0),
-  
-  EXPRESSION_NODE       = (1 << 2),
-  UNARY_EXPRESION_NODE  = (1 << 2) | (1 << 3),
-  BINARY_EXPRESSION_NODE= (1 << 2) | (1 << 4),
-  INT_NODE              = (1 << 2) | (1 << 5), 
-  FLOAT_NODE            = (1 << 2) | (1 << 6),
-  IDENT_NODE            = (1 << 2) | (1 << 7),
-  VAR_NODE              = (1 << 2) | (1 << 8),
-  FUNCTION_NODE         = (1 << 2) | (1 << 9),
-  CONSTRUCTOR_NODE      = (1 << 2) | (1 << 10),
+  EXPRESSION_NODE       ,//don't use it anyway currently
+  NESTED_EXP_NODE       ,
+  UNARY_EXPRESION_NODE  ,
+  BINARY_EXPRESSION_NODE,
 
-  STATEMENT_NODE        = (1 << 1),
-  IF_STATEMENT_NODE     = (1 << 1) | (1 << 11),
-  WHILE_STATEMENT_NODE  = (1 << 1) | (1 << 12),
-  ASSIGNMENT_NODE       = (1 << 1) | (1 << 13),
-  NESTED_SCOPE_NODE     = (1 << 1) | (1 << 14),
+  INT_NODE              ,
+  FLOAT_NODE            ,
+  BOOL_NODE             ,
+  IDENT_NODE            ,
+  VAR_NODE              ,
+  ARRAY_NODE            ,
 
-  DECLARATION_NODE      = (1 << 15)
+  FUNCTION_NODE         ,
+  CONSTRUCTOR_NODE      ,
+  TYPE_NODE             ,
+  MULTI_ARGUMENT_NODE   ,
+  ARGUMENTS_EXP_NODE    ,
+
+  IF_ELSE_STATEMENT_NODE,
+  IF_STATEMENT_NODE     ,
+//  WHILE_STATEMENT_NODE,
+  ASSIGNMENT_NODE       ,
+  NESTED_SCOPE_NODE     ,
+
+  DECLARATION_NODE      ,
+  DECLARATION_ASSIGN_NODE,
+  CONST_DECLARATION_NODE,
 } node_kind;
+
 
 struct node_ {
 
   // an example of tagging each node with a type
-  node_kind kind;
+  node_kind kind; 
 
   union {
     struct {
-      // declarations?
-      // statements?
+      node *declarations;
+      node *statements;
+      //int code_line;
     } scope;
-  
+
+    struct {
+      node *scope;      
+    } inside_scope;
+
+    struct {
+      node *declarations;
+      node *declaration;
+    } declarations;
+
+    struct {
+      node *statements;
+      node *statement;
+    } statements;
+
     struct {
       int op;
       node *right;
@@ -64,12 +110,95 @@ struct node_ {
       node *right;
     } binary_expr;
 
-    // etc.
+    struct
+    {
+      node *left;//variable
+      node *right;//expression
+    } assignment;
+
+    struct {
+      node *condition;
+      node *then_st;
+    } if_statement;
+
+    struct {
+      node *condition;
+      node *then_st;
+      node *else_st;
+    } if_else_statement;
+
+    struct {
+      node * type;
+      node *arguments;
+    } constructor;
+
+    struct {
+      int name;//dp3=0, lit=1, rsq=2
+      node* arguments;
+    } function;
+
+    struct{
+      char* id;
+    } variable;
+
+    struct {
+      char *id;
+      int index;
+    } array;
+
+    struct {
+      node *expression;
+    } nested_exp;//,arguments_exp;
+
+    struct {
+      node *type;
+      char *id;
+    } declaration;
+
+    struct {
+      node *type;
+      char *id;
+      node *value;
+    } declaration_assignment;//dec_and_assign
+
+    struct {
+      node *type;
+      char *id;
+      node *value;
+    } const_declaration;
+
+    struct {
+      int name;
+    } type;
+
+    struct {
+      int right;
+    } int_const;
+
+    struct {
+      double right;
+    }float_const;
+
+    struct {
+      int right;
+    } bool_const;
+
+    struct {
+      node *arguments;
+      node *expression;
+    }multi_argument;
+
+    struct {
+      node *expression;
+    }arguments_exp;
+
   };
 };
+
 
 node *ast_allocate(node_kind type, ...);
 void ast_free(node *ast);
 void ast_print(node * ast);
+char* get_type(int type);
 
 #endif /* AST_H_ */
