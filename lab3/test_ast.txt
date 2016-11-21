@@ -1,0 +1,14 @@
+{
+ivec4 myVec = ivec4(0,1,2,3);
+}
+/*
+  int k = 1;
+  int l = 9 + 4;
+  ivec4 myVec = ivec4(0,1,2,3);
+  int num = myVec[2];
+  float mult_arg = lit(3.4,21.0,1.2);
+  int a;
+  if(a) a = 2;
+  else a = 1;ivec2 vc = ivec2(2,3);
+*/
+
