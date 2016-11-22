@@ -3,7 +3,7 @@
  *
  *  KUNAL CHOUDHARY - kunal.choudhary@mail.utoronto.ca - 0999981863
  *  BOYOWA DAVID OGBEIDE - boyowa.ogbeide@mail.utoronto.ca - 0999644693
- 
+
  * compiler467.c
  *
  * This is the main driver program for the CSC467F course project
@@ -27,6 +27,8 @@
 
 /* Phases 3,4: Uncomment following includes as needed */
 #include "ast.h"
+//#include "symbol.h"
+#include "semantic.h"//include symbol.h
 //#include "codegen.h"
 
 /***********************************************************************
@@ -90,6 +92,9 @@ int main (int argc, char *argv[]) {
     return 0; // parse failed
   }
 
+  //table_init();
+  //semantic_check(ast);
+
 /* Phase 3: Call the AST dumping routine if requested */
   if (dumpAST)
     ast_print(ast);
@@ -105,6 +110,7 @@ int main (int argc, char *argv[]) {
  **********************************************************************/
 
 /* Make calls to any cleanup or finalization routines here. */
+  //table_dtor();//remove symbol table
   ast_free(ast);
 
   /* Clean up files if necessary */
