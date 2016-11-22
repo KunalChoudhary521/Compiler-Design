@@ -3,7 +3,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <string.h>
 
 #include "ast.h"
 #include "common.h"
@@ -513,4 +512,3 @@ void ast_print(node *ast)//needs to be top-down (preorder)
     }
 
 }
-
