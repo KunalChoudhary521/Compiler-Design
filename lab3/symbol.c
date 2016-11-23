@@ -5,6 +5,10 @@
 #include "symbol.h"
 
 struct scope* head_scope;//always points to first scope
+struct scope* get_head_scope()
+{
+    return head_scope;
+}
 
 void table_init()//initialize symbol table using head_scope
 {
@@ -54,19 +58,22 @@ void delete_scope(struct scope* curr)
     }
     curr->table_list = NULL;
 }
-
-void insert_symbol(struct scope* curr, char* id, int typ)
+struct symbol* create_symbol(char* var_name, int typ)
+{
+    struct symbol* temp = (struct symbol*)malloc(sizeof(struct symbol));
+    temp->id = (char*)malloc(sizeof(char) * (strlen(var_name) + 1));//+1 for '\0' character
+    strcpy(temp->id,var_name);
+    temp->type = typ;
+    temp->next = NULL;
+    return temp;
+}
+void insert_symbol(struct scope* curr, struct symbol* temp)
 {
     //insert symbol in current scope @ head of the list
-    struct symbol* temp = (struct symbol*)malloc(sizeof(struct symbol));
-    temp->type = typ;
-    temp->id = (char*)malloc(sizeof(char) * (strlen(id) + 1));//+1 for '\0' character
-    strcpy(temp->id,id);
-    temp->next = curr->table_list;
+    temp->next = curr->table_list;    
     curr->table_list = temp;
 }
-void delete_symbol(struct scope* curr)//delete symbol from current scope
-{/*deleting a specific symbol is unecessary*/}
+//void delete_symbol(struct scope* curr)/*deleting a specific symbol is unecessary*/
 
 //this function prevents multiple declarations
 struct symbol* find_symbol(struct scope* curr, char* id)//find symbol from current scope
@@ -89,7 +96,7 @@ void print_table(struct scope* curr)//print symbol table from a scope
     struct symbol* sym_itr = curr->table_list;
     while(sym_itr != NULL)
     {
-        printf("%d | %s", sym_itr->type, sym_itr->id);
+        printf("%d | %s -> ", sym_itr->type, sym_itr->id);
         sym_itr = sym_itr->next;
     }
 
