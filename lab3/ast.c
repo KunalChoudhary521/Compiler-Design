@@ -11,17 +11,17 @@
 
 #define DEBUG_PRINT_TREE 0
 
-char* unary_op_array[] = {"MINUS", "NOT"};
+const char* unary_op_array[] = {"MINUS", "NOT"};
 
-char* binary_op_array[] = {"AND", "OR",
-                         "EQ", "NEQ", "LT", "LEQ", "GT", "GEQ",
-                         "ADD", "SUB", "MULT", "DIV", "POW_OP"};
+const char* binary_op_array[] = {"AND", "OR",
+                                "EQ", "NEQ", "LT", "LEQ", "GT", "GEQ",
+                                "ADD", "SUB", "MULT", "DIV", "POW_OP"};
 
-char* type_array[] = { "INT", "IVEC2", "IVEC3", "IVEC4",
-                     "BOOL", "BVEC2", "BVEC3", "BVEC4",
-                     "FLOAT", "VEC2", "VEC3", "VEC4", "FUNCT" };
+const char* type_array[] = { "INT", "IVEC2", "IVEC3", "IVEC4",
+                            "BOOL", "BVEC2", "BVEC3", "BVEC4",
+                            "FLOAT", "VEC2", "VEC3", "VEC4", "FUNCT" };
 
-char* func_array[] = {"dp3", "lit", "rsq"};
+const char* func_array[] = {"dp3", "lit", "rsq"};
 
 
 node *ast = NULL;
@@ -52,13 +52,7 @@ node *ast_allocate(node_kind kind, ...) {
             printf("alloc DECLARATIONS_NODE\n");
             ast->declarations.declarations = va_arg(args, node*);
             ast->declarations.declaration = va_arg(args, node*);
-            break;
-
-        case DECLARATION_NODE:
-            printf("alloc DECLARATION_NODE\n");
-            ast->declaration.type = va_arg(args, node*);
-            ast->declaration.id = va_arg(args, char*);
-            break;
+            break;        
 
         case STATEMENTS_NODE:
             printf("alloc STATEMENTS_NODE\n");
@@ -113,6 +107,12 @@ node *ast_allocate(node_kind kind, ...) {
             printf("alloc FUNCTION_NODE\n");
             ast->function.name = va_arg(args, int);
             ast->function.arguments = va_arg(args, node *);
+            break;
+
+        case DECLARATION_NODE:
+            printf("alloc DECLARATION_NODE\n");
+            ast->declaration.type = va_arg(args, node*);
+            ast->declaration.id = va_arg(args, char*);
             break;
 
         case DECLARATION_ASSIGN_NODE:

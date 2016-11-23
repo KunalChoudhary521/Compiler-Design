@@ -195,6 +195,10 @@ struct node_ {
   };
 };
 
+extern const char* unary_op_array[2];
+extern const char* binary_op_array[13];
+extern const char* type_array[13];
+extern const char* func_array[3];
 
 node *ast_allocate(node_kind type, ...);
 void ast_free(node *ast);
