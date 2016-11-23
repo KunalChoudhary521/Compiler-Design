@@ -1,8 +1,22 @@
 {
-ivec4 myVec = ivec4(0,1,2,3);
+vec2 d = vec2(5.2,4.1);
+
 }
+/*tests that currently pass (show error):
+1   {float a; a = true;}
+2   {int a; a = 3.4;}
+3   {int a; a = false;}
+4   {bool a; a = 2;}
+5   {bool a; a = 8.9;}
+
 /*
-  int k = 1;
+  int a = 1;
+  bool b = true;
+  float c = 4.5;  
+  vec2 d = vec2(5.2,4.1);
+  ivec3 e = ivec3(2,3,4);
+  bvec4 f = bvec4(true,false,false,false);
+  
   int l = 9 + 4;
   ivec4 myVec = ivec4(0,1,2,3);
   int num = myVec[2];
@@ -10,5 +24,23 @@ ivec4 myVec = ivec4(0,1,2,3);
   int a;
   if(a) a = 2;
   else a = 1;ivec2 vc = ivec2(2,3);
+*/
+
+/*tests that currently fail:
+1   {int a; <any_type> b; a = 1;}
+
+
+*/
+
+
+/*scanner fails with the following:
+1   {int a; a = 3; float b;}
+
+
+*/
+
+/*parser fails with the following:
+1   {int a; int b; a = 4; int c;}
+
 */
 
