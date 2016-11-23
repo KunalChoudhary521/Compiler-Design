@@ -342,7 +342,7 @@ expression
 variable
   : ID
       { yTRACE("variable -> ID \n")
-        $$ = ast_allocate(VAR_NODE, $1);
+        //$$ = ast_allocate(VAR_NODE, $1);
       }
   | ID '[' INT_C ']' %prec '['
       { yTRACE("variable -> ID [ INT_C ] \n")
