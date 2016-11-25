@@ -4,8 +4,8 @@
 #include "semantic.h"
 #include "common.h"
 
-int curr_type = -2;
-int exp_type = -1;//expected type
+int curr_type = -22;
+int exp_type = -11;//expected type
 struct symbol* temp;
 
 void semantic_check( node *curr)//semantic check happens bottom-up(postorder)
@@ -43,7 +43,8 @@ void semantic_check( node *curr)//semantic check happens bottom-up(postorder)
             //printf("DECLARATION: id: %s | %d\n",curr->val.id, curr_type);
             temp = create_symbol(curr->val.id,curr_type);
             insert_symbol(get_head_scope(),temp);
-            implicit_conv_check(temp,exp_type);
+            if(exp_type != -11)//intial-value
+            {assignment_check(temp,exp_type);}
             break;
 
         case CONST_DECLARATION:
@@ -62,25 +63,29 @@ void semantic_check( node *curr)//semantic check happens bottom-up(postorder)
             break;
 
         case INT_NODE:
-            exp_type = INT;
+            curr_type = curr->typ;
             break;
 
         case FLOAT_NODE:
             //printf("FLOAT_NODE: typ: %d \n",curr->typ);
-            exp_type = FLOAT;
+            curr_type = curr->typ;
             break;
 
         case BOOL_NODE:
-            exp_type = BOOL;
+            curr_type = curr->typ;
             break;
 
         case IVEC_NODE:
+            exp_type = INT;
             break;
 
         case VEC_NODE:
+            exp_type = FLOAT;
+            //printf("VEC_NODE: %s\n", type_array[curr->typ]);
             break;
 
         case BVEC_NODE:
+            exp_type = BOOL;
             break;
 
         case NESTED_EXP:
@@ -96,7 +101,8 @@ void semantic_check( node *curr)//semantic check happens bottom-up(postorder)
 
         case TYPE_NODE:
             //printf("In TYPE_NODE: typ %d\n", curr->typ);
-            curr_type = curr->typ;
+            //curr_type = curr->typ;
+            exp_type = curr->typ;
             break;
 
         case UNARY_EXP:
@@ -148,9 +154,9 @@ void semantic_check( node *curr)//semantic check happens bottom-up(postorder)
     }
 }
 
-void implicit_conv_check(struct symbol* sym, int expected_type)
+void assignment_check(struct symbol* sym, int expected_type)
 {
-    if(sym->type != FLOAT)//allows int to be assigned to float, but not a bool
+    if(expected_type != FLOAT)//allows int to be assigned to float, but not a bool
     {
         if(sym->type != expected_type)
         {
@@ -160,10 +166,10 @@ void implicit_conv_check(struct symbol* sym, int expected_type)
     }
     else
     {
-        if(expected_type == BOOL)
+        if(sym->type == BOOL)
         {
             fprintf(errorFile,"error: implicit type conversion from %s to %s\n",
-                    type_array[sym->type], type_array[BOOL]);
+                    type_array[sym->type], type_array[expected_type]);
         }
     }
 

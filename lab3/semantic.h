@@ -7,6 +7,15 @@
 void semantic_check( node *ast);//previously, int
 
 //checks
-void implicit_conv_check(struct symbol* curr, int expected_type);
+
+/* assignment_check does the following checks:
+ * 1    Implict type conversion
+ * 2    Wrong assignment
+ * 3    Constructor call
+*/
+void assignment_check(struct symbol* curr, int expected_type);
+
+
+
 
 #endif
