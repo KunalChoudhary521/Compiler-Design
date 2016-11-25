@@ -37,7 +37,7 @@ node *ast = NULL;
 //AST construction happens bottom-up because the bison operates bottom-up (postorder)
 struct node *ast_allocate(int lex_token, int kind,struct node* f, struct node* s, struct node* t)
 {
-    printf("allocated: %s\n", nd_kind_array[kind]);
+    //printf("allocated: %s\n", nd_kind_array[kind]);
     struct node* ast_node;
     ast_node = (struct node*)malloc(sizeof(struct node));
     ast_node->node_kind = kind;
