@@ -91,11 +91,7 @@ struct node *ast_allocate(int lex_token, int kind,struct node* f, struct node* s
     else if(kind == BVEC_NODE)
     {
         ast_node->typ = lex_token;//BVEC types-enum
-    }
-    else if(kind == FLOAT_NODE)
-    {
-        ast_node->typ = FLOAT;//BVEC types-enum
-    }
+    } 
     else if(kind == FUNCTION)
     {
         ast_node->typ = yylval.as_func;
