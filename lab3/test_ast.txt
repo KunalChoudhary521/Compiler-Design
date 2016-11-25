@@ -1,4 +1,4 @@
-{bvec3 a = bvec3(true,false,true); bool b = a[2];}
+{int a = 6.3;}
 
 /*tests that pass:
 test#1: {<type> <id> =  <value>}
@@ -43,14 +43,7 @@ test#10: {accessing array index}
 {vec2 a = vec2(2.3,4.2); float b = a[1];}
 {bvec3 a = bvec3(true,false,true); bool b = a[2];}
 
-test
-
 */
 
-/*  
-  ivec4 myVec = ivec4(0,1,2,3);
-  int num = myVec[2];    
-
-*/
 
 
