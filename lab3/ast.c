@@ -37,7 +37,7 @@ node *ast = NULL;
 //AST construction happens bottom-up because the bison operates bottom-up (postorder)
 struct node *ast_allocate(int lex_token, int kind,struct node* f, struct node* s, struct node* t)
 {
-    //printf("allocated: %s\n", nd_kind_array[kind]);
+    printf("allocated: %s\n", nd_kind_array[kind]);
     struct node* ast_node;
     ast_node = (struct node*)malloc(sizeof(struct node));
     ast_node->node_kind = kind;
@@ -78,11 +78,7 @@ struct node *ast_allocate(int lex_token, int kind,struct node* f, struct node* s
     {
         ast_node->val.f_val = yylval.as_float;
         ast_node->typ = FLOAT;
-    }    
-    else if(lex_token == TYPE_NODE)
-    {
-        ast_node->typ = lex_token;//INT, FLOAT or BOOL types-enum
-    }
+    }        
 
     if(kind == IVEC_NODE)
     {
@@ -104,8 +100,11 @@ struct node *ast_allocate(int lex_token, int kind,struct node* f, struct node* s
     {
         ast_node->typ = yylval.as_func;
     }
-
-    if(kind == ARRAY_NODE)
+    else if(kind == TYPE_NODE)
+    {
+        ast_node->typ = lex_token;//INT, FLOAT or BOOL types-enum
+    }
+    else if(kind == ARRAY_NODE)
     {
         ast_node->index = parser_idx;
     }
