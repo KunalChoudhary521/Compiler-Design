@@ -7,7 +7,8 @@
 #include "ast.h"
 #include "common.h"
 #include "parser.tab.h"
-
+#include "float.h"
+#include "limits.h"
 
 #define DEBUG_PRINT_TREE 0
 
@@ -23,492 +24,279 @@ const char* type_array[] = { "INT", "IVEC2", "IVEC3", "IVEC4",
 
 const char* func_array[] = {"dp3", "lit", "rsq"};
 
+const char* nd_kind_array[] = {"PROGRAM", "SCOPE", "DECLARATIONS", "DECLARATION",
+                               "CONST_DECLARATION","STATEMENTS", "NESTED_EXP",
+                               "UNARY_EXP", "BINARY_EXP", "INT_NODE","FLOAT_NODE",
+                               "BOOL_NODE", "IVEC_NODE", "VEC_NODE", "BVEC_NODE",
+                               "VAR_NODE", "ARRAY_NODE", "FUNCTION", "CONSTRUCTOR",
+                               "MULTI_ARG", "ARGUMENTS_EXP", "IF_ELSE_STMT", "IF_STMT",
+                               "ASSIGN_STMT","NESTED_SCOPE","VAR_TO_EXP","TYPE_NODE"};
+
 
 node *ast = NULL;
 //AST construction happens bottom-up because the bison operates bottom-up (postorder)
-node *ast_allocate(node_kind kind, ...) {
-    va_list args;//defined in stdio.h
+struct node *ast_allocate(int lex_token, int kind,struct node* f, struct node* s, struct node* t)
+{
+    printf("allocated: %s\n", nd_kind_array[kind]);
+    struct node* ast_node;
+    ast_node = (struct node*)malloc(sizeof(struct node));
+    ast_node->node_kind = kind;
+    ast_node->first = f;
+    ast_node->second = s;
+    ast_node->third = t;
 
-    // make the node
-    node *ast = (node *) malloc(sizeof(node));
-    memset(ast, 0, sizeof *ast);
-    ast->kind = kind;
+    /*--setting default values--*/
+    ast_node->val.b_val = false;
+    ast_node->val.f_val = FLT_MAX;
+    ast_node->val.i_val = INT_MAX;
+    ast_node->val.id = NULL;
+    /*------------------------*/
 
-    va_start(args, kind);
-
-    switch(kind) {
-        case INSIDE_SCOPE:
-            printf("alloc INSIDE_SCOPE\n");
-            ast->inside_scope.scope = va_arg(args, node*);
-            break;
-
-        case SCOPE_NODE:
-            printf("alloc SCOPE_NODE\n");
-            ast->scope.declarations = va_arg(args, node*);
-            ast->scope.statements = va_arg(args, node *);
-            break;
-
-        case DECLARATIONS_NODE:
-            printf("alloc DECLARATIONS_NODE\n");
-            ast->declarations.declarations = va_arg(args, node*);
-            ast->declarations.declaration = va_arg(args, node*);
-            break;        
-
-        case STATEMENTS_NODE:
-            printf("alloc STATEMENTS_NODE\n");
-            ast->statements.statements = va_arg(args, node*);
-            ast->statements.statement = va_arg(args, node*);
-            break;
-
-        case NESTED_EXP_NODE:
-            printf("alloc NESTED_EXP_NODE\n");
-            ast->nested_exp.expression = va_arg(args, node*);
-            break;
-
-        case UNARY_EXPRESION_NODE:
-            printf("alloc UNARY_EXPRESION_NODE\n");
-            ast->unary_expr.op = va_arg(args, int);
-            ast->unary_expr.right = va_arg(args, node *);
-            break;
-
-        case BINARY_EXPRESSION_NODE:
-            printf("alloc EXPRESSION_NODE\n");
-            ast->binary_expr.op = va_arg(args, int);
-            ast->binary_expr.left = va_arg(args, node *);
-            ast->binary_expr.right = va_arg(args, node *);
-            break;
-
-        case ASSIGNMENT_NODE:
-            printf("alloc ASSIGNMENT_NODE\n");
-            ast->assignment.left = va_arg(args, node *);//variable
-            ast->assignment.right = va_arg(args, node *);//expression
-            break;
-
-        case IF_STATEMENT_NODE:
-            printf("alloc IF_STATEMENT_NODE\n");
-            ast->if_statement.condition = va_arg(args, node *);
-            ast->if_statement.then_st =  va_arg(args, node *);
-            break;
-
-        case IF_ELSE_STATEMENT_NODE:
-            printf("alloc IF_ELSE_STATEMENT_NODE\n");
-            ast->if_else_statement.condition = va_arg(args, node *);
-            ast->if_else_statement.then_st =  va_arg(args, node *);
-            ast->if_else_statement.else_st =  va_arg(args, node *);
-            break;
-
-        case CONSTRUCTOR_NODE:
-            printf("alloc CONSTRUCTOR_NODE\n");
-            ast->constructor.type = va_arg(args, node *);
-            ast->constructor.arguments = va_arg(args, node *);
-            break;
-
-        case FUNCTION_NODE:
-            printf("alloc FUNCTION_NODE\n");
-            ast->function.name = va_arg(args, int);
-            ast->function.arguments = va_arg(args, node *);
-            break;
-
-        case DECLARATION_NODE:
-            printf("alloc DECLARATION_NODE\n");
-            ast->declaration.type = va_arg(args, node*);
-            ast->declaration.id = va_arg(args, char*);
-            break;
-
-        case DECLARATION_ASSIGN_NODE:
-            printf("alloc DECLARATION_ASSIGN_NODE\n");
-            ast->declaration_assignment.type = va_arg(args, node*);
-            ast->declaration_assignment.id = va_arg(args, char*);
-            ast->declaration_assignment.value = va_arg(args, node*);
-            break;
-
-        case CONST_DECLARATION_NODE:
-            printf("alloc CONST_DECLARATION_NODE\n");
-            ast->const_declaration.type = va_arg(args, node*);
-            ast->const_declaration.id = va_arg(args, char*);
-            ast->const_declaration.value = va_arg(args, node*);
-            break;
-
-        case TYPE_NODE:
-            printf("alloc TYPE_NODE\n");
-            ast->type.name = va_arg(args, int);
-            break;
-
-        case INT_NODE:
-            printf("alloc INT_NODE\n");
-            ast->int_const.right = va_arg(args, int);
-            break;
-
-        case FLOAT_NODE:
-            printf("alloc FLOAT_NODE\n");
-            ast->float_const.right = va_arg(args, double);
-            break;
-
-        case BOOL_NODE:
-            printf("alloc BOOL_NODE\n");
-            ast->bool_const.right = va_arg(args, int);
-            break;
-
-        case VAR_NODE:
-            printf("alloc VAR_NODE\n");
-            ast->variable.id = va_arg(args, char*);
-            break;
-
-        case ARRAY_NODE:
-            printf("alloc ARRAY_NODE\n");
-            ast->array.id = va_arg(args, char*);
-            ast->array.index = va_arg(args, int);
-            break;
-
-        case MULTI_ARGUMENT_NODE:
-            printf("alloc MULTI_ARGUMENT_NODE\n");
-            ast->multi_argument.arguments = va_arg(args, node*);
-            ast->multi_argument.expression = va_arg(args, node*);
-            break;
-
-        case ARGUMENTS_EXP_NODE:
-            printf("alloc ARGUMENTS_EXP_NODE\n");
-            ast->arguments_exp.expression = va_arg(args, node*);
-            break;
-
-        default: break;
+    ast_node->token = lex_token;
+    if(lex_token == ID)
+    {
+        ast_node->val.id = (char*)malloc(sizeof(char) * (strlen(yylval.as_str)+1));//+1 for '\0'
+        strcpy(ast_node->val.id,yylval.as_str);
+        //printf("ID: %s\n",yylval.as_str);
+    }
+    else if(lex_token == TRUE_C)
+    {
+        ast_node->val.b_val = true;
+        ast_node->typ = BOOL;
+    }
+    else if(lex_token == FALSE_C)
+    {
+        ast_node->val.b_val = false;
+        ast_node->typ = BOOL;
+    }
+    else if(lex_token == INT_C)
+    {
+        ast_node->val.i_val = yylval.as_int;
+        ast_node->typ = INT;
+    }
+    else if(lex_token == FLOAT_C)
+    {
+        ast_node->val.f_val = yylval.as_float;
+        ast_node->typ = FLOAT;
+    }    
+    else if(lex_token == TYPE_NODE)
+    {
+        ast_node->typ = lex_token;//INT, FLOAT or BOOL types-enum
     }
 
-    va_end(args);
+    if(kind == IVEC_NODE)
+    {
+        ast_node->typ = lex_token;//IVEC types-enum
+    }
+    else if(kind == VEC_NODE)
+    {
+        ast_node->typ = lex_token;//VEC types-enum
+    }
+    else if(kind == BVEC_NODE)
+    {
+        ast_node->typ = lex_token;//BVEC types-enum
+    }
+    else if(kind == FLOAT_NODE)
+    {
+        ast_node->typ = FLOAT;//BVEC types-enum
+    }
+    else if(kind == FUNCTION)
+    {
+        ast_node->typ = yylval.as_func;
+    }
 
-    return ast;
+    if(kind == ARRAY_NODE)
+    {
+        ast_node->index = parser_idx;
+    }
+
+    return ast_node;
 }
 
-void ast_free(node *ast)//needs to be bottom-up (postorder)
+void ast_free(node *ast_node)//needs to be bottom-up (postorder)
 {
-    if(ast == NULL)
+
+    if(ast_node == NULL)
     {
         return;
     }
+    ast_free(ast_node->first);
+    ast_free(ast_node->second);
+    ast_free(ast_node->third);
 
-    switch(ast->kind){
-        case INSIDE_SCOPE:
-            ast_free(ast->inside_scope.scope);
-            free(ast);
-            ast = NULL;
-            break;
-
-        case SCOPE_NODE:
-            ast_free(ast->scope.declarations);
-            ast_free(ast->scope.statements);
-            free(ast);
-            ast = NULL;
-            break;
-
-        case DECLARATIONS_NODE:
-            ast_free(ast->declarations.declarations);
-            ast_free(ast->declarations.declaration);
-            free(ast);
-            ast = NULL;
-            break;
-
-        case DECLARATION_NODE:
-            ast_free(ast->declaration.type);
-            //ast_free(ast->declaration.id);//it doesn't make sense to traverse a non-node* type
-            break;
-
-        case STATEMENTS_NODE:
-            ast_free(ast->statements.statements);
-            ast_free(ast->statements.statement);
-            free(ast);
-            ast = NULL;
-            break;
-
-        case EXPRESSION_NODE:
-            break;
-
-        case NESTED_EXP_NODE:
-            ast_free(ast->nested_exp.expression);
-            free(ast);
-            ast = NULL;
-            break;
-
-        case UNARY_EXPRESION_NODE:
-            //ast_free(ast->unary_expr.op);
-            ast_free(ast->unary_expr.right);
-            free(ast);
-            ast = NULL;
-            break;
-
-        case BINARY_EXPRESSION_NODE:
-            //ast_free(ast->binary_expr.op);
-            ast_free(ast->binary_expr.left);
-            ast_free(ast->binary_expr.right);
-            free(ast);
-            ast = NULL;
-            break;
-
-        case ASSIGNMENT_NODE:
-            ast_free(ast->assignment.left);//variable
-            ast_free(ast->assignment.right);//expression
-            free(ast);
-            ast = NULL;
-            break;
-
-        case IF_STATEMENT_NODE:
-            ast_free(ast->if_statement.condition);
-            ast_free(ast->if_statement.then_st);
-            free(ast);
-            ast = NULL;
-            break;
-
-        case IF_ELSE_STATEMENT_NODE:
-            ast_free(ast->if_else_statement.condition);
-            ast_free(ast->if_else_statement.then_st);
-            ast_free(ast->if_else_statement.else_st);
-            free(ast);
-            ast = NULL;
-            break;
-
-        case CONSTRUCTOR_NODE:
-            //ast_free(ast->constructor.type);
-            ast_free(ast->constructor.arguments);
-            free(ast);
-            ast = NULL;
-            break;
-
-        case FUNCTION_NODE:
-            //ast_free(ast->function.name);
-            ast_free(ast->function.arguments);
-            free(ast);
-            ast = NULL;
-            break;
-
-        case DECLARATION_ASSIGN_NODE:
-            ast_free(ast->declaration_assignment.type);
-            //ast_free(ast->declaration_assignment.id);
-            ast_free(ast->declaration_assignment.value);
-            free(ast);
-            ast = NULL;
-            break;
-
-        case CONST_DECLARATION_NODE:
-            ast_free(ast->const_declaration.type);
-            //ast_free(ast->const_declaration.id);
-            ast_free(ast->const_declaration.value);
-            free(ast);
-            ast = NULL;
-            break;
-
-        case TYPE_NODE:
-            //ast_free(ast->type.name);
-            free(ast);
-            ast = NULL;
-            break;
-
-        case INT_NODE:
-            //ast_free(ast->int_const.right);
-            free(ast);
-            ast = NULL;
-            break;
-
-        case FLOAT_NODE:
-            //ast_free(ast->float_const.right);
-            free(ast);
-            ast = NULL;
-            break;
-
-        case BOOL_NODE:
-            //ast_free(ast->bool_const.right);
-            free(ast);
-            ast = NULL;
-            break;
-
-        case VAR_NODE:
-            //ast_free(ast->variable.id);//not sure if to traverse
-            free(ast);
-            ast = NULL;
-            break;
-
-        case ARRAY_NODE:
-            //ast_free(ast->array.id);
-            //ast_free(ast->array.index);
-            free(ast);
-            ast = NULL;
-            break;
-
-        case MULTI_ARGUMENT_NODE:
-            ast_free(ast->multi_argument.arguments);
-            ast_free(ast->multi_argument.expression);
-            free(ast);
-            ast = NULL;
-            break;
-
-        case ARGUMENTS_EXP_NODE:
-            ast_free(ast->arguments_exp.expression);
-            free(ast);
-            ast = NULL;
-            break;
-
-        default: break;
+    //printf("freed: %s\n", nd_kind_array[ast->node_kind]);
+    if(ast_node->token == ID)
+    {
+        free(ast_node->val.id);
+        ast_node->val.id = NULL;
     }
+    free(ast_node);
+    ast_node = NULL;
 }
 
-/* How ast_print works?
- * 1    detect what is the "kind" of current node
- * 2    print appropriate info about that node
- * 3    call ast_print on that "kind" of node
- */
-void ast_print(node *ast)//needs to be top-down (preorder)
+void ast_print(node* curr)
 {
-    if(ast == NULL)
+    if(curr == NULL)
     {
         return;
     }
+    //printf("\ntype: %d\n", curr->typ);
 
-    switch(ast->kind){
-        case INSIDE_SCOPE:
-            //printf("\n(SCOPE");
-            ast_print(ast->inside_scope.scope);
-            //printf(")\n");
+    switch(curr->node_kind)
+    {
+        case PROGRAM:
+            ast_print(curr->first);
             break;
 
-        case SCOPE_NODE:
-            printf("\n(SCOPE ");
-            ast_print(ast->scope.declarations);
-            ast_print(ast->scope.statements);
-            printf(")\n");
+        case SCOPE:
+            printf("( SCOPE ");
+            ast_print(curr->first);
+            ast_print(curr->second);
+            printf(" )\n");
             break;
 
-        case DECLARATIONS_NODE:
+        case DECLARATIONS:
             printf("( DECLARATIONS ");
-            ast_print(ast->declarations.declarations);
-            ast_print(ast->declarations.declaration);
-            printf(")\n");
+            ast_print(curr->first);
+            ast_print(curr->second);
+            printf(" )\n");
             break;
 
-        case STATEMENTS_NODE:
+        case DECLARATION:
+            printf("( DECLARATION %s ", curr->val.id);
+            ast_print(curr->first);
+            ast_print(curr->second);
+            printf(" )\n");
+            break;
+
+        case CONST_DECLARATION:
+            printf("(CONST DECLARATION %s ", curr->val.id);
+            ast_print(curr->first);
+            ast_print(curr->second);
+            printf(" )\n");
+            break;
+
+        case STATEMENTS:
             printf("( STATEMENTS ");
-            ast_print(ast->statements.statements);
-            ast_print(ast->statements.statement);
-            printf(")\n");
+            ast_print(curr->first);
+            ast_print(curr->second);
+            printf(" )\n");
             break;
 
-        case EXPRESSION_NODE:
-            break;
-
-        case NESTED_EXP_NODE:
-            ast_print(ast->nested_exp.expression);
-            break;
-
-        case UNARY_EXPRESION_NODE:
-            printf("( UNARY %s ",unary_op_array[ast->unary_expr.op]);
-            ast_print(ast->unary_expr.right);
-            printf(")\n");
-            break;
-
-        case BINARY_EXPRESSION_NODE:
-            printf("( BINARY %s ",binary_op_array[ast->binary_expr.op]);
-            ast_print(ast->binary_expr.left);
-            ast_print(ast->binary_expr.right);
-            printf(")\n");
+        case ASSIGN_STMT:
+            //printf("( ASSIGN %s ", type_array[curr->typ]);
+            printf("( ASSIGN ");
+            ast_print(curr->first);
+            ast_print(curr->second);
+            printf(")");
             break;
 
         case INT_NODE:
-            printf("%d ", ast->int_const.right);
+            printf("%s ", type_array[curr->typ]);
+            if(curr->val.i_val != INT_MAX)
+            {printf("%d ", curr->val.i_val);}
             break;
 
         case FLOAT_NODE:
-            printf("%.3f ", ast->float_const.right);
+            printf("%s ", type_array[curr->typ]);
+            if(curr->val.i_val != FLT_MAX)
+            {printf("%.3f ", curr->val.f_val);}
             break;
 
         case BOOL_NODE:
-            printf("%s ", (ast->bool_const.right) ? "true" : "false");
+            printf("%s ", type_array[curr->typ]);
+            printf("%s ", curr->val.b_val? "true" : "false");
             break;
 
-        case IDENT_NODE:
+        case IVEC_NODE:
+            printf("%s ",type_array[curr->typ]);
+            break;
+
+        case VEC_NODE:
+            printf("%s ",type_array[curr->typ]);
+            break;
+
+        case BVEC_NODE:
+            printf("%s ",type_array[curr->typ]);
+            break;
+
+        case NESTED_EXP:
+            ast_print(curr->first);
+            break;
+
+        case VAR_TO_EXP:
+            ast_print(curr->first);
             break;
 
         case VAR_NODE:
-            printf("%s ", ast->variable.id);//check if variable type also prints
-            break;
-
-        case ARRAY_NODE:
-            printf("( INDEX %s %d ", ast->array.id, ast->array.index);//( INDEX type id index)
-            //need to print type
-            break;
-
-        case FUNCTION_NODE:
-            printf("( CALL %s ", func_array[ast->function.name]);
-            ast_print(ast->function.arguments);
-            printf(")\n");
-            break;
-
-        case CONSTRUCTOR_NODE:
-            printf("\n( CONSTRUCTOR " );//need to print constructor type (ivec2,int, bool, ...)
-            ast_print(ast->constructor.type);
-            ast_print(ast->constructor.arguments);
-            printf(")\n");
+            printf("%s ", curr->val.id);
             break;
 
         case TYPE_NODE:
-            printf("%s ", type_array[ast->type.name]);
+            //printf("%s ", type_array[curr->token]);
             break;
 
-        case IF_STATEMENT_NODE:
-            /*
-             * cond is an expression form, then-stmt is a statement form,
-             * and else-stmt? is an optional statement form.
-             */
-            printf("( IF ");
-            ast_print(ast->if_statement.condition);
-            ast_print(ast->if_statement.then_st);
-            printf(")\n");
+        case UNARY_EXP:
+            printf("( UNARY %s ",unary_op_array[curr->token]);//, type_array[curr->typ]);
+            ast_print(curr->first);
+            printf(")");
             break;
 
-        case IF_ELSE_STATEMENT_NODE:
-            printf("( IF ");
-            ast_print(ast->if_else_statement.condition);
-            ast_print(ast->if_else_statement.then_st);
-            ast_print(ast->if_else_statement.else_st);
-            printf(")\n");
+        case BINARY_EXP:
+            printf("( BINARY %s ",binary_op_array[curr->token]);//type_array[curr->typ]
+            ast_print(curr->first);
+            ast_print(curr->second);
+            printf(")");
             break;
 
-        case ASSIGNMENT_NODE:
-            printf("\n( ASSIGN ");
-            ast_print(ast->assignment.left);
-            ast_print(ast->assignment.right);
-            printf(")\n");
+        case ARGUMENTS_EXP:
+            ast_print(curr->first);
             break;
 
-        case NESTED_SCOPE_NODE:
+        case FUNCTION:
+            printf("(CALL %s ", func_array[curr->typ]);
+            ast_print(curr->first);
+            printf(")");
             break;
 
-        case DECLARATION_NODE:
-            printf("\n( DECLARE_ONLY %s ",ast->declaration.id);//check if variable type prints
-            ast_print(ast->declaration.type);
-            printf(")\n");
+        case MULTI_ARG:
+            ast_print(curr->first);
+            ast_print(curr->second);
             break;
 
-        case DECLARATION_ASSIGN_NODE:
-            printf("\n( ASSIGN_&_DECLARE %s ", ast->declaration_assignment.id);
-            ast_print(ast->declaration_assignment.type);
-            ast_print(ast->declaration_assignment.value);
-            printf(")\n");
+        case CONSTRUCTOR:
+            printf("(CALL ");
+            ast_print(curr->first);
+            ast_print(curr->second);
+            printf(")");
             break;
 
-        case CONST_DECLARATION_NODE:
-            printf("\n( DECLARE_CONST_ASSIGN %s ", ast->const_declaration.id);
-            ast_print(ast->const_declaration.type);
-            ast_print(ast->const_declaration.value);
-            printf(")\n");
+        case IF_STMT:
+            printf("(IF ");
+            ast_print(curr->first);
+            ast_print(curr->second);
+            printf(")");
             break;
 
-        case MULTI_ARGUMENT_NODE:
-            ast_print(ast->multi_argument.arguments);
-            ast_print(ast->multi_argument.expression);
+        case IF_ELSE_STMT:
+            printf("(IF ");
+            ast_print(curr->first);
+            ast_print(curr->second);
+            printf(" ELSE ");
+            ast_print(curr->third);
+            printf(")");
             break;
 
-        case ARGUMENTS_EXP_NODE:
-            ast_print(ast->arguments_exp.expression);
+        case NESTED_SCOPE:
+            ast_print(curr->first);
             break;
+
+        case ARRAY_NODE:
+            printf("( INDEX %s [%d] )",curr->val.id, curr->index);
+            break;
+
 
         default: break;
     }
-
 }
+
