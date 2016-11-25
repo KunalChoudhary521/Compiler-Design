@@ -133,7 +133,7 @@ void ast_free(node *ast_node)//needs to be bottom-up (postorder)
     ast_node = NULL;
 }
 
-void ast_print(node* curr)
+void ast_print(node* curr)//needs to be top-down (preorder)
 {
     if(curr == NULL)
     {
