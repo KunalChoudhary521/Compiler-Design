@@ -9,6 +9,7 @@ Breakdown of work:
 3   Kunal - Implement Symbol Table (symbol.c)
 4   David - Write test cases to test AST and semantic analyzer
 
+NOTE: USE test_ast.txt TO TEST AST
 Approach to AST structure:
 -	Rather than handling with a variable number of node pointers for a given ast node.
 	I chose to redefine the node struct in ast.h, in which each ast node holds a 
@@ -33,7 +34,8 @@ Approach to Symbol Table:
 	it deletes a scope node. Most recently encountered scope is added to the head of the
 	scope linked-list. Similarly, whenever the most recently symbol (variable, function, 
 	unary, binary expr)	is encountered, it is added to the head of the symbol linked-list.
-	
+
+NOTE: USE test_smnt.c TO TEST SEMANTIC ANALYZER
 Approach to type/semantic checking:
 -	The general approach is as follows. Traverse the ast in post-order fashion to reach scope
 	node. Once there, create a scope node before traversing any of its child nodes. Inside
@@ -41,6 +43,10 @@ Approach to type/semantic checking:
 	source code is not according to the pre-defined rules. Once all the children of scope
 	node have been traversed, delete the current scope node (which is sitting at the top
 	of the scope linked-list).
+-   Currently, the semantic check only performs 3 checks: implict type conversion, wrong
+    assignment and wrong constructor call. I was not able to complete other semantic checks
+    in time.
+
 
 Challenges faced:
 -   Printing ast required special handling based on the node of interest. As a result,
