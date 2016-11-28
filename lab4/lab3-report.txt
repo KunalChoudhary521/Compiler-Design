@@ -1,0 +1,63 @@
+lab 3 - Report:
+
+Member#1: Kunal Choudhary - kunal.choudhary@mail.utoronto.ca - 0999981863
+Member#2: Boyowa David Ogbeide - boyowa.ogbeide@mail.utoronto.ca - 0999644693
+
+Breakdown of work:
+1   Kunal - Implement AST (ast.c)
+2   Kunal - Implement Semantic Analysis (semantic.c)
+3   Kunal - Implement Symbol Table (symbol.c)
+4   David - Write test cases to test AST and semantic analyzer
+
+NOTE: USE test_ast.txt TO TEST AST
+Approach to AST structure:
+-	Rather than handling with a variable number of node pointers for a given ast node.
+	I chose to redefine the node struct in ast.h, in which each ast node holds a 
+	maximum of 3 node pointers. Most nodes only point to 1 or 2 other nodes; however,
+	the if_else statement points to 3: condition, then_stmt and else_stmt.
+-	AST is allocated in bottom-up (postorder) fashion. When a node with useful info.
+	(such as id string or variable value) is encountered, I store that information in 
+	a newly allocated node.
+-	I declared 4 enum collections: types, unary_ops, binary_ops and node_kind. I store these
+	enum values (essentially integers) when allocating a corresponding node kind and refer to	
+	statically created 4 arrays: unary_op_array[2], binary_op_array[13],type_array[13],
+	func_array[3], nd_kind_array[27] to print appropriate information. For example, if the parser
+	encounters an int-type, then ast_allocate will save INT enum type in the ast_node->typ field.
+	When printing an int-node, the int-value stored inside ast_node->typ is used to index into
+	the types_array[] like so: 
+		printf("type's name %s",types_array[ast_node->typ]);
+	
+Approach to Symbol Table:
+-	symbol.h has 2 structures a linked-list for scope and linked-list for all symbols 
+	within a certain scope. The symbol table works similar to the cactus stack of tables.
+	When the parser encouters '{', it allocates a scope node. When the parser encouters '}', 
+	it deletes a scope node. Most recently encountered scope is added to the head of the
+	scope linked-list. Similarly, whenever the most recently symbol (variable, function, 
+	unary, binary expr)	is encountered, it is added to the head of the symbol linked-list.
+
+NOTE: USE test_smnt.c TO TEST SEMANTIC ANALYZER
+Approach to type/semantic checking:
+-	The general approach is as follows. Traverse the ast in post-order fashion to reach scope
+	node. Once there, create a scope node before traversing any of its child nodes. Inside
+	declaration node, do the appropriate semantic checks and print error messages iif the
+	source code is not according to the pre-defined rules. Once all the children of scope
+	node have been traversed, delete the current scope node (which is sitting at the top
+	of the scope linked-list).
+-   Currently, the semantic check only performs 3 checks: implict type conversion, wrong
+    assignment and wrong constructor call. I was not able to complete other semantic checks
+    in time.
+
+
+Challenges faced:
+-   Printing ast required special handling based on the node of interest. As a result,
+	I had to maintain a long switch statement code. ast_print() could have been easier
+	if there was pattern that encompassed all the ast node. For example, I could group
+	binary expression nodes and unary expresion nodes together, but I could not group 
+	them with node for INT, FLOAT or BOOL types in order to make the code shorter.
+
+Novelties/found anything interesting:
+-	Printing (ASSIGN <type> <var-name> <value>) is not possible. When parser encounters 
+	a variable, I allocate its name and type. In order to print the type of the variable, 
+	you must know the variable of interest first. The variable of interest is encountered
+	before its type due to the top-down (preorder) nature of printing. Instead, I print
+	in the following format: (ASSIGN <var-name> <type> <value>).

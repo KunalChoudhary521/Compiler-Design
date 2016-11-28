@@ -1,0 +1,27 @@
+lab 4 - Report:
+
+Member#1: Kunal Choudhary - kunal.choudhary@mail.utoronto.ca - 0999981863
+Member#2: Boyowa David Ogbeide - boyowa.ogbeide@mail.utoronto.ca - 0999644693
+
+Breakdown of work:
+-
+-
+-
+
+
+Note: All requested documentation for LAB3 is in lab3-report.txt file
+
+How did you implement non-trivial math operations?
+-	
+
+How did you handle boolean types?
+-	
+
+How did you implement if statements?
+-	
+
+How did you implement constants?
+-	
+
+How the code for each type of node was generated?
+-	
